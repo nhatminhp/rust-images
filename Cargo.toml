@@ -1,0 +1,6 @@
+[package]
+name = "hello-world-distroless"
+version = "0.1.0"
+authors = ["Minh Pham <minhpn0212@gmail.com>"]
+
+[dependencies]

@@ -1,0 +1,21 @@
+FROM rust:1.84.0 AS builder
+WORKDIR /usr/src/
+
+# Download the cargo target
+RUN rustup target add x86_64-unknown-linux-musl
+
+# Make a dummy application leveraging the docker cache for dependencies
+RUN USER=root cargo new hello-world-distroless
+WORKDIR /usr/src/hello-world-distroless
+COPY Cargo.toml Cargo.lock ./
+RUN cargo build --release
+
+# Copy application code
+COPY src ./src
+RUN cargo install --target x86_64-unknown-linux-musl --path .
+
+# Bundle Stage
+FROM scratch
+COPY --from=builder /usr/local/cargo/bin/hello-world-distroless .
+USER 1000
+CMD ["./hello-world-distroless"]
